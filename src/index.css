@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ================= USER WEBSITE THEME (LIGHT) ================= */
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background: #f8fafc;
+  color: #111827;
+}
+
+/* CONTAINER */
+.container-main {
+  max-width: 1400px;
+  margin: auto;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+/* USER GLASS */
+.glass {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+}
+
+/* ================= ADMIN THEME (DARK PREMIUM) ================= */
+
+.admin-theme {
+  @apply bg-gradient-to-br from-[#0f172a] to-[#020617] text-white min-h-screen;
+}
+
+.admin-glass {
+  @apply bg-white/10 backdrop-blur-xl border border-white/10 shadow-xl;
+}
+
+
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
