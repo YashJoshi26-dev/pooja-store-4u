@@ -18,7 +18,7 @@ import AddProduct from "./pages/admin/AddProduct";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import { CartProvider } from "./Context/CartContext";
 import Checkout from "./pages/Checkout";
-import AllProducts from "./pages/Allproducts";
+import AllProducts from "./pages/AllProducts";
 
 function LayoutWrapper() {
   const location = useLocation();
