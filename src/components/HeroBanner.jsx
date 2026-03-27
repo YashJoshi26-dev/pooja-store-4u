@@ -2,20 +2,19 @@ import { Swiper, SwiperSlide } from "swiper/react"
 import { Autoplay, Pagination, Navigation } from "swiper/modules"
 import { motion } from "framer-motion"
 import { Link } from "react-router-dom"
+import hanumanImg from "../assets/hanuman.jpeg"
 
 import "swiper/css"
 import "swiper/css/navigation"
 import "swiper/css/pagination"
 
 const slides = [
-  {
-    id: 1,
-    title: "Latest Electronics",
-    subtitle: "Upgrade Your Tech Today",
-    image:
-      "https://images.unsplash.com/photo-1518770660439-4636190af475?w=600",
-    link: "/category/Electronics",
-  },
+{
+  id: 1,
+  title: "Latest Electronics",
+  subtitle: "Upgrade Your Tech Today",
+  image: hanumanImg,   // 👈 yaha change
+},
   {
     id: 2,
     title: "Fashion Collection 2026",
