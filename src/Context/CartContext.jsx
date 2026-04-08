@@ -1,80 +1,80 @@
-import { createContext, useContext, useEffect, useState } from "react"
+import { createContext, useContext, useState, useEffect } from "react";
 
-const CartContext = createContext()
+const CartContext = createContext();
+
+// ✅ Shipping logic — matches AddProduct rules exactly
+// - Subtotal >= ₹499 → Free
+// - Cart has any item with weight >= 1kg → ₹180
+// - All items light (<1kg) → ₹79
+// - No weight info → ₹79 (safe default)
+function calcShipping(items, subtotal) {
+  if (subtotal >= 499) return 0; // free shipping
+  const hasHeavy = items.some(item => Number(item.weight || 0) >= 1);
+  return hasHeavy ? 180 : 79;
+}
 
 export function CartProvider({ children }) {
-
   const [cart, setCart] = useState(() => {
     try {
-      const stored = localStorage.getItem("cart")
-      return stored ? JSON.parse(stored) : []
+      const saved = localStorage.getItem("cart");
+      return saved ? JSON.parse(saved) : [];
     } catch {
-      return []  // ✅ FIX: handle corrupted localStorage
+      return [];
     }
-  })
+  });
 
+  // Persist cart to localStorage
   useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cart))
-  }, [cart])
+    try {
+      localStorage.setItem("cart", JSON.stringify(cart));
+    } catch {}
+  }, [cart]);
 
-  const addToCart = (product) => {
-    setCart((prev) => {
-      const existing = prev.find((item) => item.id === product.id)
+  // ── Cart actions ────────────────────────────────────────────────────────────
+  const addToCart = (product, qty = 1) => {
+    setCart(prev => {
+      const id = product._id || product.id;
+      const existing = prev.find(i => (i._id || i.id) === id);
       if (existing) {
-        return prev.map((item) =>
-          item.id === product.id
-            // ✅ FIX: respect quantity passed in (from Product page)
-            ? { ...item, quantity: item.quantity + (product.quantity || 1) }
-            : item
-        )
+        return prev.map(i =>
+          (i._id || i.id) === id
+            ? { ...i, quantity: i.quantity + qty }
+            : i
+        );
       }
-      return [...prev, { ...product, quantity: product.quantity || 1 }]
-    })
-  }
+      return [...prev, { ...product, quantity: qty }];
+    });
+  };
 
   const removeFromCart = (id) => {
-    setCart((prev) => prev.filter((item) => item.id !== id))
-  }
+    setCart(prev => prev.filter(i => (i._id || i.id) !== id));
+  };
 
-  const updateQuantity = (id, quantity) => {
-    if (quantity < 1) return
-    setCart((prev) =>
-      prev.map((item) => item.id === id ? { ...item, quantity } : item)
-    )
-  }
+  const updateQuantity = (id, qty) => {
+    if (qty < 1) { removeFromCart(id); return; }
+    setCart(prev =>
+      prev.map(i => (i._id || i.id) === id ? { ...i, quantity: qty } : i)
+    );
+  };
 
-  const clearCart = () => setCart([])
+  const clearCart = () => setCart([]);
 
-  const subtotal = cart.reduce((total, item) => total + item.price * item.quantity, 0)
-  const shipping = subtotal > 2000 ? 0 : 99
-  const total = subtotal + shipping
-
-  // ✅ cartCount available directly in context (used by Navbar)
-  const cartCount = cart.reduce((total, item) => total + item.quantity, 0)
+  // ── Computed values ─────────────────────────────────────────────────────────
+  const cartCount = cart.reduce((sum, i) => sum + i.quantity, 0);
+  const subtotal  = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
+  const shipping  = calcShipping(cart, subtotal); // ✅ real shipping logic
+  const total     = subtotal + shipping;
 
   return (
-    <CartContext.Provider
-      value={{
-        cart,
-        addToCart,
-        removeFromCart,
-        updateQuantity,
-        clearCart,
-        subtotal,
-        shipping,
-        total,
-        cartCount,
-      }}
-    >
+    <CartContext.Provider value={{
+      cart, addToCart, removeFromCart, updateQuantity, clearCart,
+      cartCount, subtotal, shipping, total,
+    }}>
       {children}
     </CartContext.Provider>
-  )
+  );
 }
 
 export function useCart() {
-  const context = useContext(CartContext)
-  if (!context) {
-    throw new Error("useCart must be used inside a CartProvider")  // ✅ FIX: helpful error
-  }
-  return context
+  return useContext(CartContext);
 }

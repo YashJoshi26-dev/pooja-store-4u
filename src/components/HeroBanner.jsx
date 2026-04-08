@@ -2,7 +2,7 @@ import { Swiper, SwiperSlide } from "swiper/react"
 import { Autoplay, Pagination, Navigation } from "swiper/modules"
 import { motion } from "framer-motion"
 import { Link } from "react-router-dom"
-import hanumanImg from "../assets/hanuman.jpeg"
+import shino from "../assets/shino.jpg"
 
 import "swiper/css"
 import "swiper/css/navigation"
@@ -11,9 +11,9 @@ import "swiper/css/pagination"
 const slides = [
 {
   id: 1,
-  title: "Latest Electronics",
-  subtitle: "Upgrade Your Tech Today",
-  image: hanumanImg,   // 👈 yaha change
+  title: "puja samagri collection",
+  subtitle: "Trending Puja Essentials for Every Ritual",
+  image: shino,   // 👈 yaha change
 },
   {
     id: 2,
