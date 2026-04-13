@@ -116,7 +116,8 @@ export default function AddProduct() {
         const formData = new FormData();
         formData.append("title", form.name);
         formData.append("description", form.description || "");
-        formData.append("category", form.category);
+        formData.append("category",   form.categories?.[0] || form.category || "");
+        formData.append("categories", JSON.stringify(form.categories || []));
         formData.append("brand", form.brand || "Custom");
         formData.append("stock", form.stock);
         formData.append("sku", form.sku || "");
@@ -124,7 +125,8 @@ export default function AddProduct() {
         formData.append("tags", JSON.stringify(form.tags));
         formData.append("weight", form.weight || 0);
         formData.append("featured", form.featured);
-        formData.append("variants", JSON.stringify(form.variants));
+        const cleanVariants = form.variants.filter(v => v.size || v.color || v.design)
+        formData.append("variants", JSON.stringify(cleanVariants));
 
         if (form.discountPrice && form.price) {
           formData.append("oldPrice", form.price);

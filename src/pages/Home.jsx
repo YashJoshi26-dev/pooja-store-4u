@@ -11,14 +11,13 @@ import { getAllProducts } from "../api/productApi"
 
 function SkeletonCard() {
   return (
-    <div className="bg-white rounded-3xl shadow-md overflow-hidden animate-pulse">
-      <div className="h-52 bg-gray-200" />
-      <div className="p-4 flex flex-col gap-3">
-        <div className="h-3 bg-gray-200 rounded w-1/3" />
-        <div className="h-4 bg-gray-200 rounded w-3/4" />
-        <div className="h-3 bg-gray-200 rounded w-1/2" />
-        <div className="h-4 bg-gray-200 rounded w-1/3" />
-        <div className="h-9 bg-gray-200 rounded-xl" />
+    <div className="bg-white rounded-lg overflow-hidden animate-pulse border border-gray-100">
+      <div className="h-40 bg-gray-100"/>
+      <div className="p-3 flex flex-col gap-2">
+        <div className="h-3 bg-gray-100 rounded w-full"/>
+        <div className="h-3 bg-gray-100 rounded w-3/4"/>
+        <div className="h-4 bg-gray-100 rounded w-1/2 mt-1"/>
+        <div className="h-8 bg-gray-100 rounded mt-2"/>
       </div>
     </div>
   )
@@ -37,10 +36,22 @@ function EmptyState() {
 
 function ProductSwiper({ products }) {
   return (
-    <Swiper modules={[Navigation]} navigation spaceBetween={20}
-      breakpoints={{ 320: { slidesPerView: 1.5 }, 640: { slidesPerView: 2 }, 768: { slidesPerView: 3 }, 1024: { slidesPerView: 4 } }}>
+    <Swiper
+      modules={[Navigation]}
+      navigation
+      spaceBetween={8}
+      breakpoints={{
+        0:    { slidesPerView: 2   },
+        640:  { slidesPerView: 3   },
+        768:  { slidesPerView: 3   },
+        1024: { slidesPerView: 4   },
+        1280: { slidesPerView: 5   },
+      }}
+    >
       {products.map(p => (
-        <SwiperSlide key={p._id || p.id}><ProductCard product={p} /></SwiperSlide>
+        <SwiperSlide key={p._id || p.id}>
+          <ProductCard product={p} />
+        </SwiperSlide>
       ))}
     </Swiper>
   )
@@ -105,22 +116,22 @@ export default function Home() {
   )
 
   return (
-    <div>
+    <div className="pb-14 md:pb-0" style={{background:"#F0F3F7"}}>
       <SocialSidebar />
       <HeroBanner />
       <CategoryGrid />
 
       {/* NEW ARRIVALS */}
-      <section className="container-main py-16">
-        <div className="flex justify-between items-center mb-6">
+      <section className="container-main py-4 md:py-8">
+        <div className="flex justify-between items-center mb-3">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900">New Arrivals</h2>
+            <h2 className="text-base md:text-xl font-black text-gray-900">New Arrivals</h2>
             <p className="text-sm text-gray-400 mt-0.5">Latest products from our store</p>
           </div>
           <Link to="/products" className="text-sm font-semibold text-red-500 hover:underline">View All →</Link>
         </div>
         {loading ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3">
             {Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)}
           </div>
         ) :  newArrivals.length > 0 ? 
@@ -133,10 +144,10 @@ export default function Home() {
 
       {/* FEATURED */}
       {!loading && featuredProducts.length > 0 && (
-        <section className="container-main py-8">
-          <div className="flex justify-between items-center mb-6">
+        <section className="container-main py-4 md:py-6">
+          <div className="flex justify-between items-center mb-3">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">Featured Products</h2>
+              <h2 className="text-base md:text-xl font-black text-gray-900">Featured Products</h2>
               <p className="text-sm text-gray-400 mt-0.5">Handpicked for you</p>
             </div>
             <Link to="/products" className="text-sm font-semibold text-red-500 hover:underline">View All →</Link>
@@ -150,15 +161,15 @@ export default function Home() {
 
       {/* BEST DEALS */}
       {!loading && onSale.length > 0 && (
-        <section className="container-main py-8">
-          <div className="flex justify-between items-center mb-6">
+        <section className="container-main py-4 md:py-6">
+          <div className="flex justify-between items-center mb-3">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">🔥 Best Deals</h2>
+              <h2 className="text-base md:text-xl font-black text-gray-900">🔥 Best Deals</h2>
               <p className="text-sm text-gray-400 mt-0.5">50%+ discount products</p>
             </div>
             <Link to="/products" className="text-sm font-semibold text-red-500 hover:underline">View All →</Link>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3">
             {onSale.slice(0, 8).map(p => <ProductCard key={p._id || p.id} product={p} />)}
           </div>
         </section>
@@ -166,15 +177,15 @@ export default function Home() {
 
       {/* BEST SELLERS */}
       {!loading && (
-        <section className="container-main py-8">
-          <div className="flex justify-between items-center mb-6">
+        <section className="container-main py-4 md:py-6">
+          <div className="flex justify-between items-center mb-3">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">⭐ Best Sellers</h2>
+              <h2 className="text-base md:text-xl font-black text-gray-900">⭐ Best Sellers</h2>
               <p className="text-sm text-gray-400 mt-0.5">Most popular products</p>
             </div>
             <Link to="/products" className="text-sm font-semibold text-red-500 hover:underline">View All →</Link>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3">
           {bestSellers.length > 0
               ? bestSellers.slice(0,8).map(p => (
               <ProductCard key={p._id || p.id} product={p} />
@@ -187,15 +198,15 @@ export default function Home() {
 
       {/* PUJAN SAMAGRI */}
       {!loading && pujanProducts.length > 0 && (
-        <section className="container-main py-8">
-          <div className="flex justify-between items-center mb-6">
+        <section className="container-main py-4 md:py-6">
+          <div className="flex justify-between items-center mb-3">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">🪔 Pujan Samagri</h2>
+              <h2 className="text-base md:text-xl font-black text-gray-900">🪔 Pujan Samagri</h2>
               <p className="text-sm text-gray-400 mt-0.5">Devotional items & accessories</p>
             </div>
             <Link to="/category/Pujan%20Samagri" className="text-sm font-semibold text-red-500 hover:underline">View All →</Link>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3">
             {pujanProducts.slice(0, 8).map(p => <ProductCard key={p._id || p.id} product={p} />)}
           </div>
         </section>
@@ -223,7 +234,7 @@ export default function Home() {
           <div className="flex flex-col md:flex-row gap-4 justify-center">
             <input type="email" placeholder="Enter your email"
               className="px-4 py-3 rounded-xl text-black w-full md:w-80 outline-none" />
-            <button className="bg-red-500 px-8 py-3 rounded-xl hover:bg-red-600 transition font-semibold">Subscribe</button>
+            <button className="bg-blue-500 px-8 py-3 rounded-xl hover:bg-blue-600 transition font-semibold">Subscribe</button>
           </div>
         </div>
       </section>
@@ -251,10 +262,11 @@ export default function Home() {
             {/* Social icons */}
             <div className="flex gap-3 mt-5">
               {[
-                { icon: "whatsapp", href: `https://wa.me/919876543210`, bg: "#25D366" },
-                { icon: "instagram", href: "https://instagram.com/YOUR_HANDLE", bg: "#E1306C" },
-                { icon: "facebook", href: "https://facebook.com/YOUR_PAGE", bg: "#1877F2" },
-                { icon: "linkedin", href: "https://linkedin.com/company/YOUR", bg: "#0A66C2" },
+                { icon: "whatsapp", href: "https://whatsapp.com/channel/0029VajCR73IN9imWUvSMr46", bg: "#25D366" },
+                { icon: "instagram", href: "https://instagram.com/poojastore4u?igsh=bTI0ZGp3a2g3c2s2", bg: "#E1306C" },
+                { icon: "facebook", href: "https://facebook.com/poojastore4u", bg: "#1877F2" },
+                { icon: "linkedin", href: "https://linkedin.com/company/poojastore4u", bg: "#0A66C2" },
+            
               ].map(s => (
                 <a key={s.icon} href={s.href} target="_blank" rel="noopener noreferrer"
                   style={{ background: s.bg }}

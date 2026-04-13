@@ -10,23 +10,23 @@ import NotFound    from "./pages/NotFound";
 import Checkout    from "./pages/Checkout";
 import AllProducts from "./pages/AllProducts";
 
-// ✅ ALL admin imports from pages/admin — NOT components/admin
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminLogin     from "./pages/admin/AdminLogin";
 import Products       from "./pages/admin/Products";
 import AddProduct     from "./pages/admin/AddProduct";
+import Orders         from "./pages/admin/Orders";
+import Customers      from "./pages/admin/Customers";
 
-import ProtectedRoute    from "./routes/ProtectedRoute";
-import { CartProvider }  from "./Context/CartContext";
+import ProtectedRoute   from "./routes/ProtectedRoute";
+import { CartProvider } from "./Context/CartContext";
 
 function LayoutWrapper() {
-  const location   = useLocation();
+  const location     = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
 
   return (
     <>
       {!isAdminRoute && <Navbar />}
-
       <Routes>
         {/* USER ROUTES */}
         <Route path="/"               element={<Home />} />
@@ -41,6 +41,8 @@ function LayoutWrapper() {
         <Route path="/admin/dashboard"   element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
         <Route path="/admin/products"    element={<ProtectedRoute><Products /></ProtectedRoute>} />
         <Route path="/admin/add-product" element={<ProtectedRoute><AddProduct /></ProtectedRoute>} />
+        <Route path="/admin/orders"      element={<ProtectedRoute><Orders /></ProtectedRoute>} />
+        <Route path="/admin/customers"   element={<ProtectedRoute><Customers /></ProtectedRoute>} />
 
         {/* 404 */}
         <Route path="*" element={<NotFound />} />

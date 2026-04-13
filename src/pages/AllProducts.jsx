@@ -18,25 +18,34 @@ function SkeletonCard() {
 
 export default function AllProducts() {
   const [products, setProducts] = useState([])
-  const [loading, setLoading]   = useState(true)
-  const [search, setSearch]     = useState("")
-  const [sort, setSort]         = useState("")
+  const [loading,  setLoading]  = useState(true)
+  const [error,    setError]    = useState(null)
+  const [search,   setSearch]   = useState("")
+  const [sort,     setSort]     = useState("")
 
   useEffect(() => {
-    getAllProducts().then((data) => {
-      setProducts(data)
-      setLoading(false)
-    })
+    getAllProducts()
+      .then((data) => setProducts(Array.isArray(data) ? data : []))
+      .catch(() => setError("Failed to load products. Please try again."))
+      .finally(() => setLoading(false))
   }, [])
 
   const filtered = products
-    .filter((p) => p.title.toLowerCase().includes(search.toLowerCase()))
+    .filter((p) => p.title?.toLowerCase().includes(search.toLowerCase()))
     .sort((a, b) => {
       if (sort === "low")    return a.price - b.price
       if (sort === "high")   return b.price - a.price
       if (sort === "rating") return b.rating - a.rating
       return 0
     })
+
+  if (error) return (
+    <div className="min-h-screen flex flex-col items-center justify-center gap-4">
+      <p className="text-red-500 font-medium">{error}</p>
+      <button onClick={() => window.location.reload()}
+        className="bg-slate-900 text-white px-6 py-2 rounded-lg">Retry</button>
+    </div>
+  )
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-10">
@@ -47,25 +56,22 @@ export default function AllProducts() {
           <h1 className="text-2xl font-bold">All Products</h1>
           {!loading && <p className="text-sm text-gray-400 mt-1">{filtered.length} products</p>}
         </div>
-
-        <div className="flex gap-3 flex-wrap">
-          {/* Search */}
+        <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
           <input
             type="text"
             placeholder="Search products..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="border rounded-lg px-4 py-2 text-sm outline-none focus:border-blue-500 w-56"
+            className="border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-slate-400 w-full sm:w-64"
           />
-          {/* Sort */}
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value)}
-            className="border rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500"
+            className="border border-gray-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-slate-400"
           >
             <option value="">Sort By</option>
-            <option value="low">Price: Low → High</option>
-            <option value="high">Price: High → Low</option>
+            <option value="low">Price: Low to High</option>
+            <option value="high">Price: High to Low</option>
             <option value="rating">Best Rating</option>
           </select>
         </div>
@@ -73,21 +79,25 @@ export default function AllProducts() {
 
       {/* Grid */}
       {loading ? (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
           {Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} />)}
         </div>
       ) : filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 gap-4 text-center">
           <div className="text-5xl">🔍</div>
           <p className="font-semibold text-gray-700">No products found</p>
-          <button onClick={() => setSearch("")} className="bg-slate-900 text-white px-6 py-2 rounded-lg text-sm hover:bg-slate-800 transition">
-            Clear Search
-          </button>
+          <p className="text-sm text-gray-400">Try a different search term</p>
+          {search && (
+            <button onClick={() => setSearch("")}
+              className="text-sm font-semibold text-red-500 hover:underline">
+              Clear Search
+            </button>
+          )}
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {filtered.map((product) => (
-            <ProductCard key={product.id} product={product} />
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+          {filtered.map((p) => (
+            <ProductCard key={p._id || p.id} product={p} />
           ))}
         </div>
       )}

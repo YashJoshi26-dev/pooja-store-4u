@@ -2,7 +2,7 @@ import { Swiper, SwiperSlide } from "swiper/react"
 import { Autoplay, Pagination, Navigation } from "swiper/modules"
 import { motion } from "framer-motion"
 import { Link } from "react-router-dom"
-import shino from "../assets/shino.jpg"
+import puja from "../assets/puja.jpeg"
 
 import "swiper/css"
 import "swiper/css/navigation"
@@ -13,46 +13,54 @@ const slides = [
   id: 1,
   title: "Pujan Samagri",
   subtitle: "Trending Puja Essentials for Every Ritual",
-  image: shino,   // 👈 yaha change
+  image: puja,
+  link: "/category/Pujan%20Samagri",
+  badge: "New Collection",
+  cta: "Shop Now",
+  accent: "#FF6B35",
+  style: {
+    width: "100%",
+    maxWidth: "1400px",
+    height: "450px",
+    objectFit: "cover"
+  }
 },
   {
     id: 2,
     title: "Fashion Collection",
-    subtitle: "Trendy Styles Just Arrived",
-    image:
-      "https://images.unsplash.com/photo-1445205170230-053b83016050",
+    subtitle: "Trendy Styles at Unbeatable Prices",
+    image: "https://images.unsplash.com/photo-1445205170230-053b83016050?w=1400",
     link: "/category/Fashion",
+    badge: "Trending Now",
+    cta: "Explore →",
+    accent: "#2874F0",
   },
   {
     id: 3,
     title: "Home & Kitchen Deals",
     subtitle: "Make Your Home Beautiful",
-    image:
-      "https://images.unsplash.com/photo-1505691938895-1758d7feb511",
-    link: "/category/Home & Kitchen",
+    image: "https://images.unsplash.com/photo-1505691938895-1758d7feb511?w=1400",
+    link: "/category/Home%20%26%20Kitchen%20Care",
+    badge: "Best Deals",
+    cta: "Shop Deals →",
+    accent: "#388E3C",
   },
 ]
 
-function HeroBanner() {
+export default function HeroBanner() {
   return (
     <section className="w-full">
-
       <Swiper
         modules={[Autoplay, Pagination, Navigation]}
-        autoplay={{ delay: 4000 }}
+        autoplay={{ delay: 4500, disableOnInteraction: false }}
         pagination={{ clickable: true }}
         navigation
         loop
-        className="h-[420px] md:h-[520px]"
+        className="h-[200px] sm:h-[300px] md:h-[400px] lg:h-[460px]"
       >
-
-        {slides.map((slide) => (
-
+        {slides.map(slide => (
           <SwiperSlide key={slide.id}>
-
             <div className="relative w-full h-full">
-
-              {/* BACKGROUND IMAGE */}
 
               <img
                 src={slide.image}
@@ -60,61 +68,58 @@ function HeroBanner() {
                 className="w-full h-full object-cover"
               />
 
-              {/* OVERLAY */}
+              {/* gradient */}
+              <div className="absolute inset-0"
+                style={{ background: "rgba(0,0,0,0.45)" }}
+              />
 
-              <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/10"></div>
-
-              {/* CONTENT */}
-
+              {/* content */}
               <div className="absolute inset-0 flex items-center">
-
-                <div className="max-w-7xl mx-auto px-6">
-
+                <div className="w-full flex justify-center px-4">
                   <motion.div
-                    initial={{ opacity: 0, y: 40 }}
+                    key={slide.id}
+                    initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8 }}
-                    className="text-white max-w-xl"
+                    transition={{ duration: 0.6 }}
+                    className="text-center max-w-xs sm:max-w-md md:max-w-2xl"
                   >
+                    {/* badge */}
+                    <span
+                      className="inline-block text-white text-[9px] sm:text-[11px] font-black px-2.5 py-1 rounded-sm mb-2 sm:mb-3 uppercase tracking-widest"
+                      style={{ background: slide.accent }}
+                    >
+                      {slide.badge}
+                    </span>
 
-                    <h1 className="text-3xl md:text-5xl font-bold mb-4">
+                    {/* title */}
+                    <h1 className="text-xl sm:text-3xl md:text-5xl font-black text-white leading-tight mb-1 sm:mb-2 md:mb-3">
                       {slide.title}
                     </h1>
 
-                    <p className="text-lg md:text-xl mb-6 text-gray-200">
+                    {/* subtitle */}
+                    <p className="hidden sm:block text-xs sm:text-sm md:text-base text-gray-200 mb-3 md:mb-5 font-medium">
                       {slide.subtitle}
                     </p>
 
+                    {/* CTA */}
                     <Link to={slide.link}>
-
                       <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="bg-white text-black px-6 py-3 rounded-full font-medium shadow-soft"
+                        whileHover={{ scale: 1.04, y: -1 }}
+                        whileTap={{ scale: 0.97 }}
+                        className="text-gray-900 text-xs sm:text-sm font-black px-4 sm:px-6 py-2 sm:py-2.5 rounded-sm shadow-lg transition-all"
+                        style={{ background: "white" }}
                       >
-
-                        Shop Now
-
+                        {slide.cta}
                       </motion.button>
-
                     </Link>
-
                   </motion.div>
-
                 </div>
-
               </div>
 
             </div>
-
           </SwiperSlide>
-
         ))}
-
       </Swiper>
-
     </section>
   )
 }
-
-export default HeroBanner
