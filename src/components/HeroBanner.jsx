@@ -11,13 +11,13 @@ import "swiper/css/pagination"
 const slides = [
 {
   id: 1,
-  title: "puja samagri collection",
+  title: "Pujan Samagri",
   subtitle: "Trending Puja Essentials for Every Ritual",
   image: shino,   // 👈 yaha change
 },
   {
     id: 2,
-    title: "Fashion Collection 2026",
+    title: "Fashion Collection",
     subtitle: "Trendy Styles Just Arrived",
     image:
       "https://images.unsplash.com/photo-1445205170230-053b83016050",

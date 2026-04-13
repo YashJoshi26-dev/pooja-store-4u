@@ -2,13 +2,15 @@ import { useState, useEffect } from "react";
 import api from "../../api/api";
 
 const statusConfig = {
-  Delivered:  { bg:"#e6f9f2", color:"#00875a" },
-  Shipped:    { bg:"#e8f4ff", color:"#0066cc" },
-  Processing: { bg:"#fff8e0", color:"#c47f00" },
-  Cancelled:  { bg:"#fef0f0", color:"#cc0000" },
+  "Delivered":        { bg:"#e6f9f2", color:"#00875a" },
+  "Shipped":          { bg:"#e8f4ff", color:"#0066cc" },
+  "Processing":       { bg:"#fff8e0", color:"#c47f00" },
+  "Ready to Ship":    { bg:"#fff0f4", color:"#ff3f6c" },
+  "Cancelled":        { bg:"#fef0f0", color:"#cc0000" },
+  "Refund Processed": { bg:"#f5f5f5", color:"#666"    },
 };
 
-const ALL_STATUSES = ["All","Delivered","Shipped","Processing","Cancelled"];
+const ALL_STATUSES = ["All","Processing","Ready to Ship","Shipped","Delivered","Cancelled","Refund Processed"];
 
 export default function Orders() {
   const [orders,       setOrders]       = useState([]);
@@ -56,10 +58,10 @@ export default function Orders() {
   };
 
   const stats = [
-    { label:"Total Orders",  value:orders.length,                                              color:"#ff3f6c", icon:"📦" },
-    { label:"Delivered",     value:orders.filter(o=>o.status==="Delivered").length,            color:"#00875a", icon:"✅" },
-    { label:"In Transit",    value:orders.filter(o=>o.status==="Shipped").length,              color:"#0066cc", icon:"🚚" },
-    { label:"Total Revenue", value:`₹${orders.reduce((s,o)=>s+(o.total||0),0).toLocaleString()}`, color:"#ff6b35", icon:"💰" },
+    { label:"Total Orders",  value:orders.length,                                                   color:"#ff3f6c", icon:"📦" },
+    { label:"Delivered",     value:orders.filter(o=>o.status==="Delivered").length,                 color:"#00875a", icon:"✅" },
+    { label:"In Transit",    value:orders.filter(o=>o.status==="Shipped").length,                   color:"#0066cc", icon:"🚚" },
+    { label:"Total Revenue", value:`₹${orders.reduce((s,o)=>s+(o.total||0),0).toLocaleString()}`,  color:"#ff6b35", icon:"💰" },
   ];
 
   if (loading) return (
@@ -81,7 +83,7 @@ export default function Orders() {
         .status-tab{padding:7px 16px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid #e8e8e8;background:#fff;color:#888;transition:all 0.15s;font-family:'Plus Jakarta Sans',sans-serif;}
         .status-tab:hover{border-color:#ff3f6c;color:#ff3f6c;}.status-tab.active{background:#ff3f6c;color:#fff;border-color:#ff3f6c;}
         .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.3);z-index:100;display:flex;align-items:center;justify-content:center;}
-        .modal{background:#fff;border-radius:16px;padding:28px;width:480px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.15);}
+        .modal{background:#fff;border-radius:16px;padding:28px;width:520px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.15);}
       `}</style>
 
       {/* Stats */}
@@ -134,7 +136,7 @@ export default function Orders() {
                         <p style={{fontSize:11,color:"#aaa"}}>{o.customerInfo?.email}</p>
                       </td>
                       <td style={{padding:"12px 16px",fontSize:12,color:"#555",maxWidth:160,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>
-                        {o.items?.[0]?.title}{o.items?.length>1?` +${o.items.length-1} more`:""}
+                        {o.items?.map(i=>`${i.title} x${i.quantity}`).join(", ")}
                       </td>
                       <td style={{padding:"12px 16px",fontSize:13,fontWeight:700,color:"#1a1a1a",fontFamily:"'JetBrains Mono',monospace"}}>₹{o.total?.toLocaleString()}</td>
                       <td style={{padding:"12px 16px"}}>
@@ -146,7 +148,7 @@ export default function Orders() {
                       <td style={{padding:"12px 16px"}} onClick={e=>e.stopPropagation()}>
                         <select value={o.status} disabled={updating===o._id} onChange={e=>handleStatusChange(o._id,e.target.value)}
                           style={{fontSize:11,border:"1px solid #e8e8e8",borderRadius:6,padding:"4px 8px",outline:"none",cursor:"pointer",fontFamily:"'Plus Jakarta Sans',sans-serif"}}>
-                          {["Processing","Shipped","Delivered","Cancelled"].map(s=><option key={s}>{s}</option>)}
+                          {["Processing","Ready to Ship","Shipped","Delivered","Cancelled","Refund Processed"].map(s=><option key={s}>{s}</option>)}
                         </select>
                       </td>
                     </tr>
@@ -159,10 +161,12 @@ export default function Orders() {
         )}
       </div>
 
-      {/* Modal */}
-      {selected&&(
+      {/* ✅ Modal — only renders when selected is not null */}
+      {selected && (
         <div className="overlay" onClick={()=>setSelected(null)}>
           <div className="modal" onClick={e=>e.stopPropagation()}>
+
+            {/* Header */}
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
               <div>
                 <h2 style={{fontSize:18,fontWeight:800,color:"#1a1a1a"}}>{selected.orderId}</h2>
@@ -170,35 +174,59 @@ export default function Orders() {
               </div>
               <button onClick={()=>setSelected(null)} style={{background:"none",border:"none",fontSize:22,cursor:"pointer",color:"#aaa"}}>×</button>
             </div>
+
+            {/* Customer info */}
             {[
               ["Customer",  selected.customerInfo?.name],
               ["Email",     selected.customerInfo?.email],
               ["Phone",     selected.customerInfo?.phone],
               ["Address",   `${selected.deliveryAddress?.address}, ${selected.deliveryAddress?.city} - ${selected.deliveryAddress?.pincode}`],
-              ["Items",     selected.items?.length],
               ["Amount",    `₹${selected.total?.toLocaleString()}`],
               ["Payment",   selected.paymentMethod?.toUpperCase()],
               ["Status",    selected.status],
             ].map(([k,v])=>(
               <div key={k} style={{display:"flex",justifyContent:"space-between",padding:"10px 0",borderBottom:"1px solid #f5f5f5"}}>
                 <span style={{fontSize:12,color:"#888",fontWeight:600}}>{k}</span>
-                <span style={{fontSize:13,color:"#1a1a1a",fontWeight:700}}>{v}</span>
+                <span style={{fontSize:13,color:"#1a1a1a",fontWeight:700,textAlign:"right",maxWidth:"60%"}}>{v}</span>
               </div>
             ))}
+
+            {/* ✅ Order items with SKU + qty — correctly inside modal */}
+            <div style={{marginTop:16,marginBottom:8}}>
+              <p style={{fontSize:11,fontWeight:700,color:"#aaa",marginBottom:10,letterSpacing:"0.05em"}}>ORDER ITEMS</p>
+              {selected.items?.map((item,i)=>(
+                <div key={i} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 0",borderBottom:"1px solid #f5f5f5"}}>
+                  <div>
+                    <p style={{fontSize:13,fontWeight:600,color:"#1a1a1a"}}>{item.title}</p>
+                    {item.sku && <p style={{fontSize:11,color:"#aaa",fontFamily:"monospace",marginTop:2}}>SKU: {item.sku}</p>}
+                  </div>
+                  <div style={{textAlign:"right"}}>
+                    <p style={{fontSize:12,color:"#555"}}>Qty: {item.quantity}</p>
+                    <p style={{fontSize:13,fontWeight:700,color:"#1a1a1a"}}>₹{(item.price*item.quantity).toLocaleString()}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Update status buttons */}
             <div style={{marginTop:20}}>
               <p style={{fontSize:11,fontWeight:700,color:"#aaa",marginBottom:8,letterSpacing:"0.05em"}}>UPDATE STATUS</p>
               <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-                {["Processing","Shipped","Delivered","Cancelled"].map(s=>{
-                  const sc=statusConfig[s];
+                {["Processing","Ready to Ship","Shipped","Delivered","Cancelled","Refund Processed"].map(s=>{
+                  const sc=statusConfig[s]||{bg:"#f5f5f5",color:"#666"};
                   return (
                     <button key={s} onClick={()=>handleStatusChange(selected._id,s)} disabled={updating===selected._id}
-                      style={{padding:"7px 14px",borderRadius:20,fontSize:12,fontWeight:700,cursor:"pointer",border:`1.5px solid ${selected.status===s?sc.color:"#e8e8e8"}`,background:selected.status===s?sc.bg:"#fff",color:selected.status===s?sc.color:"#888",transition:"all 0.15s"}}>
+                      style={{padding:"7px 14px",borderRadius:20,fontSize:12,fontWeight:700,cursor:"pointer",
+                        border:`1.5px solid ${selected.status===s?sc.color:"#e8e8e8"}`,
+                        background:selected.status===s?sc.bg:"#fff",
+                        color:selected.status===s?sc.color:"#888",transition:"all 0.15s"}}>
                       {s}
                     </button>
                   );
                 })}
               </div>
             </div>
+
           </div>
         </div>
       )}

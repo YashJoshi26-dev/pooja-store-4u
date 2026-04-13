@@ -58,7 +58,9 @@ export function CartProvider({ children }) {
   };
 
   const clearCart = () => setCart([]);
-
+const buyNow = (product, qty = 1) => {
+  setCart([{ ...product, quantity: qty }]);
+};
   // ── Computed values ─────────────────────────────────────────────────────────
   const cartCount = cart.reduce((sum, i) => sum + i.quantity, 0);
   const subtotal  = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
@@ -67,9 +69,9 @@ export function CartProvider({ children }) {
 
   return (
     <CartContext.Provider value={{
-      cart, addToCart, removeFromCart, updateQuantity, clearCart,
+      cart, addToCart, removeFromCart, updateQuantity, clearCart, buyNow,
       cartCount, subtotal, shipping, total,
-    }}>
+    }}> 
       {children}
     </CartContext.Provider>
   );
