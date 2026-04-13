@@ -1,11 +1,11 @@
 import { motion } from "framer-motion"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { FiHeart, FiShoppingCart } from "react-icons/fi"
 import { useCart } from "../Context/CartContext"
 
 function ProductCard({ product }) {
-  const { addToCart } = useCart()
-
+  const { addToCart, buyNow } = useCart()
+  const navigate = useNavigate()
   // ✅ Support both MongoDB _id and local id
   const productId = product._id || product.id
 
@@ -35,12 +35,12 @@ function ProductCard({ product }) {
 
       {/* WISHLIST */}
       <button className="absolute top-3 right-3 bg-white p-2 rounded-full shadow hover:bg-red-50 hover:text-red-500 transition z-10">
-        <FiHeart size={16}/>
+        <FiHeart size={16} />
       </button>
 
       {/* IMAGE */}
       <Link to={`/product/${productId}`}>
-        <div className="h-52 overflow-hidden bg-gray-50">
+        <div className="h-40 sm:h-52 overflow-hidden bg-gray-50">
           <img
             src={product.image || product.images?.[0]}
             alt={product.title}
@@ -83,25 +83,53 @@ function ProductCard({ product }) {
 
         {/* Stock */}
         {product.stock !== undefined && (
-          <p className={`text-xs font-semibold ${product.stock > 0 ? "text-green-600" : "text-red-500"}`}>
-            {product.stock > 0 ? (product.stock < 10 ? `Only ${product.stock} left!` : "In Stock") : "Out of Stock"}
-          </p>
+          <div>
+            {product.stock > 5 ? (
+              <p className="text-xs font-semibold text-green-600">✓ IN STOCK</p>
+            ) : product.stock > 0 ? (
+              <p className="text-xs font-semibold text-orange-500">⚠ Only {product.stock} items left</p>
+            ) : (
+              <div className="flex flex-col gap-1">
+                <p className="text-xs font-semibold text-red-500">✕ Out of Stock</p>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const contact = window.prompt("Enter your email or phone to get notified:");
+                    if (contact?.trim()) alert(`✅ We'll notify you at ${contact.trim()} when back in stock!`);
+                  }}
+                  className="text-xs font-semibold text-white bg-orange-500 hover:bg-orange-600 px-2 py-1 rounded-lg transition text-left"
+                >
+                  🔔 Notify Me
+                </button>
+              </div>
+            )}
+          </div>
         )}
 
         {/* Add to Cart */}
-        <motion.button
-          whileTap={{ scale: 0.95 }}
-          onClick={() => addToCart(product)}
-          disabled={product.stock === 0}
-          className={`mt-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition ${
-            product.stock === 0
+        <div className="flex flex-col sm:flex-row gap-2 mt-1">
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={() => addToCart(product)}
+            disabled={product.stock === 0}
+            className={`flex-1 flex items-center justify-center gap-1 py-2 rounded-xl text-xs sm:text-sm font-semibold transition ${product.stock === 0
               ? "bg-gray-100 text-gray-400 cursor-not-allowed"
               : "bg-slate-900 text-white hover:bg-red-500"
-          }`}
-        >
-          <FiShoppingCart size={15}/>
-          {product.stock === 0 ? "Out of Stock" : "Add to Cart"}
-        </motion.button>
+              }`}
+          >
+            <FiShoppingCart size={14} />
+            {product.stock === 0 ? "Out of Stock" : "Add to Cart"}
+          </motion.button>
+
+          {product.stock > 0 && (
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={() => { buyNow(product, 1); navigate("/checkout"); }}
+              className="flex-1 flex items-center justify-center py-2 rounded-xl text-xs sm:text-sm font-semibold bg-red-500 text-white hover:bg-red-600 transition"    >
+              Buy Now
+            </motion.button>
+          )}
+        </div>
       </div>
     </motion.div>
   )

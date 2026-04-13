@@ -26,8 +26,14 @@ export default function Checkout() {
   const handleDeliveryChange = (e) => setDelivery({ ...delivery, [e.target.name]: e.target.value })
   const handlePaymentChange  = (e) => setPayment({  ...payment,  [e.target.name]: e.target.value })
 
-  const deliveryValid = delivery.name && delivery.email && delivery.phone &&
-                        delivery.address && delivery.city && delivery.pincode
+ const deliveryValid =
+  delivery.name.trim().length > 0 &&
+  /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(delivery.email) &&
+  /^\d{10,}$/.test(delivery.phone.replace(/\D/g, "")) &&
+  delivery.address.trim().length > 0 &&
+  delivery.city.trim().length > 0 &&
+  delivery.state.trim().length > 0 &&
+  /^\d{6}$/.test(delivery.pincode.trim());
 
   // ✅ Place real order
   const handlePlaceOrder = async () => {
@@ -213,13 +219,13 @@ export default function Checkout() {
                   <h2 className="text-lg font-bold mb-4">Delivery Details</h2>
                   <div className="grid grid-cols-2 gap-4">
                     {[
-                      {name:"name",    label:"Full Name *",  placeholder:"Rahul Sharma",    col:2},
-                      {name:"email",   label:"Email *",      placeholder:"rahul@email.com", col:1},
-                      {name:"phone",   label:"Phone *",      placeholder:"+91 98765 43210", col:1},
+                      {name:"name",    label:"Full Name *",  placeholder:"Enter your full name",    col:2},
+                      {name:"email",   label:"Email *",      placeholder:"Enter your email", col:1},
+                      {name:"phone",   label:"Phone *",      placeholder:"Enter your phone number", col:1},
                       {name:"address", label:"Address *",    placeholder:"House No, Street",col:2},
-                      {name:"city",    label:"City *",       placeholder:"Mumbai",          col:1},
-                      {name:"state",   label:"State",        placeholder:"Maharashtra",     col:1},
-                      {name:"pincode", label:"Pincode *",    placeholder:"400001",          col:1},
+                      {name:"city",    label:"City *",       placeholder:"Enter your city",  col:1},
+                      {name:"state",   label:"State *",        placeholder:"Enter your state",     col:1},
+                      {name:"pincode", label:"Pincode *",    placeholder:"Enter your pincode",          col:1},
                     ].map(f => (
                       <div key={f.name} className={f.col === 2 ? "col-span-2" : ""}>
                         <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wide">{f.label}</label>
@@ -230,7 +236,7 @@ export default function Checkout() {
                   </div>
                   <div className="flex gap-3 mt-6">
                     <button onClick={() => setStep(0)} className="flex-1 border border-gray-200 py-3 rounded-xl font-semibold text-gray-600 hover:bg-gray-50 transition text-sm">← Back</button>
-                    <button onClick={() => deliveryValid && setStep(2)} disabled={!deliveryValid}
+                    <button onClick={() => { if (!deliveryValid) { alert("Please fill all required fields correctly."); return; } setStep(2); }} disabled={!deliveryValid}
                       className={`flex-1 py-3 rounded-xl font-semibold transition text-sm ${deliveryValid ? "bg-slate-900 text-white hover:bg-slate-800" : "bg-gray-200 text-gray-400 cursor-not-allowed"}`}>
                       Continue to Payment →
                     </button>
