@@ -1,82 +1,90 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useEffect, useState } from "react"
 
-const CartContext = createContext();
+const CartContext = createContext()
 
-// ✅ Shipping logic — matches AddProduct rules exactly
-// - Subtotal >= ₹499 → Free
-// - Cart has any item with weight >= 1kg → ₹180
-// - All items light (<1kg) → ₹79
-// - No weight info → ₹79 (safe default)
 function calcShipping(items, subtotal) {
-  if (subtotal >= 499) return 0; // free shipping
-  const hasHeavy = items.some(item => Number(item.weight || 0) >= 1);
-  return hasHeavy ? 180 : 79;
+  if (subtotal >= 499) return 0
+  const hasHeavy = items.some(item => Number(item.weight || 0) >= 1)
+  return hasHeavy ? 180 : 79
 }
 
 export function CartProvider({ children }) {
+
   const [cart, setCart] = useState(() => {
     try {
-      const saved = localStorage.getItem("cart");
-      return saved ? JSON.parse(saved) : [];
+      const stored = localStorage.getItem("cart")
+      return stored ? JSON.parse(stored) : []
     } catch {
-      return [];
+      return []
     }
-  });
+  })
 
-  // Persist cart to localStorage
   useEffect(() => {
-    try {
-      localStorage.setItem("cart", JSON.stringify(cart));
-    } catch {}
-  }, [cart]);
+    localStorage.setItem("cart", JSON.stringify(cart))
+  }, [cart])
 
-  // ── Cart actions ────────────────────────────────────────────────────────────
   const addToCart = (product, qty = 1) => {
-    setCart(prev => {
-      const id = product._id || product.id;
-      const existing = prev.find(i => (i._id || i.id) === id);
+    setCart((prev) => {
+      const id = product._id || product.id
+      const existing = prev.find((item) => (item._id || item.id) === id)
       if (existing) {
-        return prev.map(i =>
-          (i._id || i.id) === id
-            ? { ...i, quantity: i.quantity + qty }
-            : i
-        );
+        return prev.map((item) =>
+          (item._id || item.id) === id
+            ? { ...item, quantity: item.quantity + qty }
+            : item
+        )
       }
-      return [...prev, { ...product, quantity: qty }];
-    });
-  };
+      return [...prev, { ...product, quantity: qty }]
+    })
+  }
+
+  // ✅ Buy Now — replaces cart with single product
+  const buyNow = (product, qty = 1) => {
+    setCart([{ ...product, quantity: qty }])
+  }
 
   const removeFromCart = (id) => {
-    setCart(prev => prev.filter(i => (i._id || i.id) !== id));
-  };
+    setCart((prev) => prev.filter((item) => (item._id || item.id) !== id))
+  }
 
-  const updateQuantity = (id, qty) => {
-    if (qty < 1) { removeFromCart(id); return; }
-    setCart(prev =>
-      prev.map(i => (i._id || i.id) === id ? { ...i, quantity: qty } : i)
-    );
-  };
+  const updateQuantity = (id, quantity) => {
+    if (quantity < 1) { removeFromCart(id); return }
+    setCart((prev) =>
+      prev.map((item) => (item._id || item.id) === id ? { ...item, quantity } : item)
+    )
+  }
 
-  const clearCart = () => setCart([]);
-const buyNow = (product, qty = 1) => {
-  setCart([{ ...product, quantity: qty }]);
-};
-  // ── Computed values ─────────────────────────────────────────────────────────
-  const cartCount = cart.reduce((sum, i) => sum + i.quantity, 0);
-  const subtotal  = cart.reduce((sum, i) => sum + i.price * i.quantity, 0);
-  const shipping  = calcShipping(cart, subtotal); // ✅ real shipping logic
-  const total     = subtotal + shipping;
+  const clearCart = () => setCart([])
+
+  const cartCount = cart.reduce((total, item) => total + item.quantity, 0)
+  const subtotal  = cart.reduce((total, item) => total + item.price * item.quantity, 0)
+  const shipping  = calcShipping(cart, subtotal)
+  const total     = subtotal + shipping
 
   return (
-    <CartContext.Provider value={{
-      cart, addToCart, removeFromCart, updateQuantity, clearCart, buyNow,
-      cartCount, subtotal, shipping, total,
-    }}> 
+    <CartContext.Provider
+      value={{
+        cart,
+        addToCart,
+        buyNow,
+        removeFromCart,
+        updateQuantity,
+        clearCart,
+        subtotal,
+        shipping,
+        total,
+        cartCount,
+      }}
+    >
       {children}
     </CartContext.Provider>
-  );
+  )
 }
 
 export function useCart() {
-  return useContext(CartContext);
+  const context = useContext(CartContext)
+  if (!context) {
+    throw new Error("useCart must be used inside a CartProvider")
+  }
+  return context
 }

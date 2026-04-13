@@ -1,49 +1,62 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* RESET */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-/* ================= USER WEBSITE THEME (LIGHT) ================= */
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-  font-family: system-ui, -apple-system, sans-serif;
-  background: #f8fafc;
-  color: #111827;
+  font-family: 'Nunito', sans-serif;
+  background: #F0F3F7;
+  color: #1a1a2e;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* CONTAINER */
+:root {
+  --primary:   #2874F0;
+  --primary-d: #1a5dc8;
+  --accent:    #FB641B;
+  --accent-d:  #e5560f;
+  --bg:        #F0F3F7;
+  --card:      #ffffff;
+  --text:      #212121;
+  --muted:     #878787;
+  --border:    #e8eaed;
+}
+
 .container-main {
   max-width: 1400px;
   margin: auto;
-  padding-left: 24px;
-  padding-right: 24px;
+  padding-left: 16px;
+  padding-right: 16px;
 }
 
-/* USER GLASS */
+@media (min-width: 640px) {
+  .container-main { padding-left: 24px; padding-right: 24px; }
+}
+
+/* Flipkart-style horizontal scroll */
+.scroll-x {
+  display: flex;
+  overflow-x: auto;
+  gap: 12px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.scroll-x::-webkit-scrollbar { display: none; }
+
+/* Glass */
 .glass {
-  background: rgba(255, 255, 255, 0.75);
+  background: rgba(255,255,255,0.85);
   backdrop-filter: blur(12px);
 }
 
-/* ================= ADMIN THEME (DARK PREMIUM) ================= */
-
+/* Admin theme unchanged */
 .admin-theme {
   @apply bg-gradient-to-br from-[#0f172a] to-[#020617] text-white min-h-screen;
 }
-
 .admin-glass {
   @apply bg-white/10 backdrop-blur-xl border border-white/10 shadow-xl;
-}
-
-
-.glass {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
 }

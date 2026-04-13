@@ -16,6 +16,9 @@ export default function Checkout() {
   const [orderId, setOrderId] = useState(null)
   const [error,   setError]   = useState("")
 
+  // ✅ FIX: Snapshot order values before cart is cleared
+  const [orderSnapshot, setOrderSnapshot] = useState(null)
+
   const [delivery, setDelivery] = useState({
     name:"", email:"", phone:"", address:"", city:"", state:"", pincode:"",
   })
@@ -65,6 +68,8 @@ export default function Checkout() {
         paymentMethod: payment.method,
       })
       setOrderId(order.orderId)
+      // ✅ FIX: Save totals before clearing cart
+      setOrderSnapshot({ subtotal, shipping, total })
       clearCart()
       setPlaced(true)
     } catch (err) {
@@ -95,17 +100,17 @@ export default function Checkout() {
           <div className="bg-gray-50 rounded-xl p-4 text-left mb-6 space-y-2">
             <div className="flex justify-between text-sm">
               <span className="text-gray-500">Subtotal</span>
-              <span className="font-semibold">₹{subtotal.toLocaleString()}</span>
+              <span className="font-semibold">₹{(orderSnapshot?.subtotal ?? subtotal).toLocaleString()}</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-gray-500">Shipping</span>
-              <span className={shipping === 0 ? "font-bold text-green-600" : "font-semibold"}>
-                {shipping === 0 ? "Free 🎉" : `₹${shipping}`}
+              <span className={(orderSnapshot?.shipping ?? shipping) === 0 ? "font-bold text-green-600" : "font-semibold"}>
+                {(orderSnapshot?.shipping ?? shipping) === 0 ? "Free 🎉" : `₹${orderSnapshot?.shipping ?? shipping}`}
               </span>
             </div>
             <div className="flex justify-between text-sm font-bold border-t pt-2">
               <span>Total Paid</span>
-              <span>₹{total.toLocaleString()}</span>
+              <span>₹{(orderSnapshot?.total ?? total).toLocaleString()}</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-gray-500">Delivery To</span>
@@ -113,7 +118,7 @@ export default function Checkout() {
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-gray-500">Est. Delivery</span>
-              <span className="font-semibold text-green-600">3–5 Business Days</span>
+              <span className="font-semibold text-green-600">5–7 Business Days</span>
             </div>
           </div>
           <Link to="/" className="block w-full bg-slate-900 text-white py-3 rounded-xl font-semibold hover:bg-slate-800 transition text-center">
