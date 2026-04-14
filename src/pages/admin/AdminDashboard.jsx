@@ -18,6 +18,7 @@ const sellerInfo = {
   name:"Admin", email:"admin@test.com", 
   store:"PoojaStore4u", location:"Indore, Madhya Pradesh",
   plan:"Pro Seller", planExpiry:"Apr 1, 2027", joined:"Jan 2025",
+  phone:"+91 9407137528",
 };
 
 // ─── CHARTS ───────────────────────────────────────────────────────────────────
@@ -175,7 +176,7 @@ function AccountPage({ onLogout, stats }) {
     { label:"Store Name",   value:sellerInfo.store,    icon:"🛍️" },
     { label:"Email",        value:sellerInfo.email,    icon:"📧" },
     { label:"Phone",        value:sellerInfo.phone,    icon:"📞" },
-    { label:"GST Number",   value:sellerInfo.gst,      icon:"🧾" },
+   
     { label:"Location",     value:sellerInfo.location, icon:"📍" },
     { label:"Member Since", value:sellerInfo.joined,   icon:"📅" },
   ];
@@ -663,7 +664,7 @@ export default function AdminDashboard() {
                   {[
                     {icon:"📞",label:sellerInfo.phone},
                     {icon:"📍",label:sellerInfo.location},
-                    {icon:"🧾",label:sellerInfo.gst},
+                    
                     {icon:"📅",label:`Member since ${sellerInfo.joined}`},
                   ].map((row)=>(
                     <div key={row.label} style={{padding:"9px 16px",display:"flex",alignItems:"center",gap:10,borderBottom:"1px solid #fafafa"}}>

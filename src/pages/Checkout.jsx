@@ -118,7 +118,7 @@ export default function Checkout() {
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-gray-500">Est. Delivery</span>
-              <span className="font-semibold text-green-600">5–7 Business Days</span>
+              <span className="font-semibold text-green-600">5–8 Business Days</span>
             </div>
           </div>
           <Link to="/" className="block w-full bg-slate-900 text-white py-3 rounded-xl font-semibold hover:bg-slate-800 transition text-center">

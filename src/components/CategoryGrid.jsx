@@ -5,37 +5,55 @@ import { FiChevronLeft, FiChevronRight } from "react-icons/fi"
 import { CATEGORIES } from "../data/categories"
 
 const categoryImages = {
-  "Fashion":             "https://images.unsplash.com/photo-1445205170230-053b83016050?w=400",
-  "Hardware & Tools":    "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=400",
-  "Electronics":         "https://images.unsplash.com/photo-1518770660439-4636190af475?w=400",
+  "Fashion": "https://images.unsplash.com/photo-1445205170230-053b83016050?w=400",
   "Home & Kitchen Care": "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400",
-  "Stationary":          "https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?w=400",
-  "Organisers":          "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400",
-  "Toys":                "https://images.unsplash.com/photo-1558877385-81a1c7e67d72?w=400",
-  "Decoration":          "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=400",
-  "Gifting Products":    "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=400",
-  "Jewellery":           "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400",
-  "Gardening":           "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400",
-  "KIDS Accessories":    "https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=400",
-  "Women Accessories":   "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400",
-  "Beauty & Body Care":  "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400",
-  "Pujan Samagri":       "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400",
-  "Holi":                "https://images.unsplash.com/photo-1615461065624-a7723efd0ce0?w=400",
-  "Raksha Bandhan":      "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400",
-  "Summer":              "https://images.unsplash.com/photo-1473496169904-658ba7574b0d?w=400",
-  "Winter":              "https://images.unsplash.com/photo-1418985991508-e47386d96a71?w=400",
-  "Rainy":               "https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?w=400",
+  "Stationary": "https://images.unsplash.com/photo-1456735190827-d1262f71b8a3?w=400",
+  "Organisers": "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400",
+  "Toys": "https://images.unsplash.com/photo-1558877385-81a1c7e67d72?w=400",
+  "Decoration": "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=400",
+  "Gifting Products": "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=400",
+  "Jewellery": "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400",
+  "Gardening": "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400",
+  "KIDS Accessories": "https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=400",
+  "Women Accessories": "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400",
+  "Beauty & Body Care": "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400",
+  "Pujan Samagri": "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400",
+  "Electronics": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=400",
+  "Hardware & Tools": "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=400",
+  "Holi": "https://images.unsplash.com/photo-1615461065624-a7723efd0ce0?w=400",
+  "Raksha Bandhan": "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400",
+  "Summer": "https://images.unsplash.com/photo-1473496169904-658ba7574b0d?w=400",
+  "Winter": "https://images.unsplash.com/photo-1418985991508-e47386d96a71?w=400",
+  "Rainy": "https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?w=400",
 }
-
+// NEW
 const FEATURED_CATS = [
-  "Pujan Samagri","Fashion","Electronics","Home & Kitchen Care",
-  "Jewellery","Gifting Products","Beauty & Body Care","Toys",
-  "KIDS Accessories","Decoration","Stationary","Gardening",
+  "Fashion",
+  "Home & Kitchen Care",
+  "Stationary",
+  "Organisers",
+  "Toys",
+  "Decoration",
+  "Gifting Products",
+  "Jewellery",
+  "KIDS Accessories",
+  "Women Accessories",
+  "Beauty & Body Care",
+  "Pujan Samagri",
+  "Electronics",
+  "Hardware & Tools",
+  "Holi",
+  "Raksha Bandhan",
+  "Summer",
+  "Winter",
+  "Rainy",
 ]
 
 export default function CategoryGrid() {
   const scrollRef = useRef(null)
-  const displayCats = CATEGORIES.filter(c => FEATURED_CATS.includes(c.label))
+ const displayCats = FEATURED_CATS
+  .map(label => CATEGORIES.find(c => c.label === label))
+  .filter(Boolean)
 
   const scroll = (dir) => {
     if (scrollRef.current) {
@@ -66,7 +84,7 @@ export default function CategoryGrid() {
             onClick={() => scroll(-1)}
             className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 z-10 w-8 h-8 bg-white rounded-full shadow-md border border-gray-200 items-center justify-center hover:shadow-lg transition"
           >
-            <FiChevronLeft size={16} className="text-gray-600"/>
+            <FiChevronLeft size={16} className="text-gray-600" />
           </button>
 
           {/* Scrollable row */}
@@ -110,7 +128,7 @@ export default function CategoryGrid() {
             onClick={() => scroll(1)}
             className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 z-10 w-8 h-8 bg-white rounded-full shadow-md border border-gray-200 items-center justify-center hover:shadow-lg transition"
           >
-            <FiChevronRight size={16} className="text-gray-600"/>
+            <FiChevronRight size={16} className="text-gray-600" />
           </button>
         </div>
 

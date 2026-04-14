@@ -40,9 +40,7 @@ export default function Navbar() {
                 <span className="text-white font-black text-lg tracking-tight leading-none">
                   Pooja<span className="text-yellow-300">Store</span>4u
                 </span>
-                <span className="text-blue-200 text-[9px] font-semibold tracking-wide italic">
-                  Explore Plus ▾
-                </span>
+                
               </Link>
 
               {/* SEARCH — center */}
@@ -115,7 +113,7 @@ export default function Navbar() {
         <div className="bg-white shadow-sm hidden md:block border-b border-gray-100">
           <div className="container-main">
             <div className="flex items-center gap-1 h-11 overflow-x-auto scrollbar-none">
-              {CATEGORIES.slice(0, 10).map(cat => (
+              {CATEGORIES.slice(0, 12).map(cat => (
                 <Link
                   key={cat.id}
                   to={`/category/${encodeURIComponent(cat.label)}`}
