@@ -12,7 +12,6 @@ export const CATEGORIES = [
   { id: "decoration",       label: "Decoration",          sku: "DEC", sub: [] },
   { id: "gifting",          label: "Gifting Products",    sku: "GFT", sub: [] },
   { id: "jewellery",        label: "Jewellery",           sku: "JWL", sub: [] },
-
   { id: "kids-accessories", label: "KIDS Accessories",    sku: "KDS", sub: [] },
   { id: "women-accessories",label: "Women Accessories",   sku: "WMA", sub: [] },
   { id: "beauty-body",      label: "Beauty & Body Care",  sku: "BBC", sub: [] },
@@ -24,11 +23,11 @@ export const CATEGORIES = [
     sku:   "PUJ",
     sub: [
       { id: "pujan-samagri-general", label: "Pujan Samagri",       sku: "PUJ" },
-      { id: "laddu-gopal-shringar",  label: "Laddu Gopal Shringar", sku: "LAG" },
-      { id: "hanuman-ji-vastra",     label: "Hanuman Ji Vastra",    sku: ""    },
-      { id: "radha-krishna-vastra",  label: "Radha Krishna Vastra", sku: ""    },
-      { id: "ganesh-ji-vastra",      label: "Ganesh Ji Vastra",     sku: ""    },
-      { id: "mata-chunri",           label: "Mata Chunri",          sku: ""    },
+      { id: "laddu-gopal-shringar",  label: "Bhagwan Ji Vastra", sku: "LAG" },
+      { id: "hanuman-ji-vastra",     label: "Bhanwan Ji Shringar",    sku: ""    },
+      { id: "radha-krishna-vastra",  label: "other", sku: ""    },
+      // { id: "ganesh-ji-vastra",      label: "Ganesh Ji Vastra",     sku: ""    },
+      // { id: "mata-chunri",           label: "Mata Chunri",          sku: ""    },
     ],
   },
 

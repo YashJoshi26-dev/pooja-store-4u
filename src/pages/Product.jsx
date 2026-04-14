@@ -45,19 +45,19 @@ function Product() {
   const getMatchedVariant = () => {
     if (!product.variants?.length || !selectedVariant) return null
     return product.variants.find(v =>
-      (!selectedVariant.size   || v.size   === selectedVariant.size)   &&
-      (!selectedVariant.color  || v.color  === selectedVariant.color)  &&
+      (!selectedVariant.size || v.size === selectedVariant.size) &&
+      (!selectedVariant.color || v.color === selectedVariant.color) &&
       (!selectedVariant.design || v.design === selectedVariant.design)
     )
   }
 
   const matchedVariant = getMatchedVariant()
-  const currentPrice   = matchedVariant?.price || product.price
-  const currentStock   = matchedVariant ? matchedVariant.stock : product.stock
+  const currentPrice = matchedVariant?.price || product.price
+  const currentStock = matchedVariant ? matchedVariant.stock : product.stock
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12">
-      <div className="grid lg:grid-cols-2 gap-10">
+    <div className="max-w-7xl mx-auto px-3 py-4 md:py-12">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10">
 
         {/* PRODUCT GALLERY */}
         <div>
@@ -69,15 +69,14 @@ function Product() {
           >
             {images.map((img, index) => (
               <SwiperSlide key={index}>
-                <img src={img} alt="product" className="w-full h-[420px] object-cover" />
-              </SwiperSlide>
+                <img src={img} alt="product" className="w-full h-[260px] sm:h-[360px] lg:h-[420px] object-cover" />              </SwiperSlide>
             ))}
           </Swiper>
 
           <Swiper onSwiper={setThumbsSwiper} spaceBetween={10} slidesPerView={4} className="mt-4">
             {images.map((img, index) => (
               <SwiperSlide key={index}>
-                <img src={img} alt="thumb" className="h-24 w-full object-cover rounded-lg cursor-pointer" />
+                <img src={img} alt="thumb" className="h-16 sm:h-24 w-full object-cover rounded-lg cursor-pointer" />
               </SwiperSlide>
             ))}
           </Swiper>
@@ -86,7 +85,7 @@ function Product() {
         {/* PRODUCT INFO */}
         <div className="space-y-6">
 
-          <h1 className="text-2xl font-bold">{product.title}</h1>
+          <h1 className="text-lg sm:text-2xl font-bold">{product.title}</h1>
 
           {/* RATING */}
           <div className="flex items-center gap-2 text-yellow-500">
@@ -97,7 +96,7 @@ function Product() {
 
           {/* PRICE */}
           <div className="flex items-center gap-4">
-            <span className="text-3xl font-bold">₹{currentPrice}</span>
+            <span className="text-2xl sm:text-3xl font-bold">₹{currentPrice}</span>
             {product.oldPrice && (
               <span className="line-through text-gray-400">₹{product.oldPrice}</span>
             )}
@@ -173,7 +172,7 @@ function Product() {
           </div>
 
           {/* BUTTONS */}
-          <div className="flex gap-4 flex-wrap">
+          <div className="flex gap-3 flex-wrap w-full">
             <button
               disabled={currentStock === 0}
               className={"px-6 py-3 rounded-lg font-semibold transition " + (currentStock === 0 ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "bg-slate-900 text-white hover:bg-slate-800")}
