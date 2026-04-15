@@ -9,6 +9,7 @@ import Cart        from "./pages/Cart";
 import NotFound    from "./pages/NotFound";
 import Checkout    from "./pages/Checkout";
 import AllProducts from "./pages/AllProducts";
+import AllCategoriesPage from "./pages/AllCategoriesPage";
 
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminLogin     from "./pages/admin/AdminLogin";
@@ -35,6 +36,8 @@ function LayoutWrapper() {
         <Route path="/cart"           element={<Cart />} />
         <Route path="/checkout"       element={<Checkout />} />
         <Route path="/products"       element={<AllProducts />} />
+        <Route path="/categories" element={<AllCategoriesPage />} />
+        
 
         {/* ADMIN ROUTES */}
         <Route path="/admin/login"       element={<AdminLogin />} />

@@ -70,7 +70,7 @@ export default function CategoryGrid() {
           <h2 className="text-base md:text-lg font-black text-gray-900">
             Shop by <span style={{ color: "var(--primary)" }}>Category</span>
           </h2>
-          <Link to="/products"
+          <Link to="/categories"
             style={{ color: "var(--primary)" }}
             className="text-xs font-bold hover:underline">
             View All →

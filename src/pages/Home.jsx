@@ -252,14 +252,14 @@ export default function Home() {
         <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.117 1.528 5.847L.057 23.882l6.23-1.448A11.934 11.934 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.806 9.806 0 01-5.006-1.371l-.36-.214-3.7.859.933-3.595-.234-.37A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z" />
       </svg>
       <a href="https://wa.me/919407137528" target="_blank" rel="noopener noreferrer" className="hover:text-green-500 transition-colors">
-        WhatsApp: +91 94071 37528
+        WhatsApp: +918982975608
       </a></li>
     <li className="flex items-center gap-2">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-blue-500">
         <path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2a1 1 0 011.01-.24c1.12.37 2.33.57 3.58.57a1 1 0 011 1V20a1 1 0 01-1 1C10.01 21 3 13.99 3 5a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.46.57 3.58a1 1 0 01-.25 1.01l-2.2 2.2z" />
       </svg>
       <a href="tel:+919407137528" className="hover:text-blue-500 transition-colors">
-        Support: +91 94071 37528
+        Support: +91 8982975608
       </a>
     </li>
   </ul>

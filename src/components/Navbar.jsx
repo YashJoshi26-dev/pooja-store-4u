@@ -79,7 +79,7 @@ export default function Navbar() {
                   className="hidden md:flex items-center gap-1 text-white font-semibold text-sm px-3 py-1.5 hover:bg-blue-700 rounded-sm transition"
                   onMouseEnter={openDrop} onMouseLeave={closeDrop}
                 >
-                  More <FiChevronDown size={14} className={`transition-transform ${showCats ? "rotate-180" : ""}`}/>
+                  WishList <FiChevronDown size={14} className={`transition-transform ${showCats ? "rotate-180" : ""}`}/>
                 </button>
 
                 {/* Cart */}

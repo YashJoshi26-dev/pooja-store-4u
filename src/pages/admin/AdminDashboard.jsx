@@ -15,7 +15,7 @@ const statusColor = (s) => ({
 }[s] || { bg:"#f5f5f5", color:"#666" });
 
 const sellerInfo = {
-  name:"Admin", email:"admin@test.com", 
+  name:"Admin", email:"poojastore4u.com", 
   store:"PoojaStore4u", location:"Indore, Madhya Pradesh",
   plan:"Pro Seller", planExpiry:"Apr 1, 2027", joined:"Jan 2025",
   phone:"+91 9407137528",
