@@ -3,6 +3,8 @@ import { motion } from "framer-motion"
 import { Link } from "react-router-dom"
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi"
 import { CATEGORIES } from "../data/categories"
+import shino from "../assets/shino.jpg"
+import Holi from "../assets/5480.jpg" 
 
 const categoryImages = {
   "Fashion": "https://images.unsplash.com/photo-1445205170230-053b83016050?w=400",
@@ -17,12 +19,12 @@ const categoryImages = {
   "KIDS Accessories": "https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=400",
   "Women Accessories": "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400",
   "Beauty & Body Care": "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400",
-  "Pujan Samagri": "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400",
+    "Pujan Samagri": shino,
   "Electronics": "https://images.unsplash.com/photo-1518770660439-4636190af475?w=400",
   "Hardware & Tools": "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=400",
-  "Holi": "https://images.unsplash.com/photo-1615461065624-a7723efd0ce0?w=400",
-  "Raksha Bandhan": "https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400",
-  "Summer": "https://images.unsplash.com/photo-1473496169904-658ba7574b0d?w=400",
+"Holi": Holi,
+"Raksha Bandhan": "https://images.unsplash.com/photo-1599643477877-530eb83abc8e?w=400",
+"Summer": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400",
   "Winter": "https://images.unsplash.com/photo-1418985991508-e47386d96a71?w=400",
   "Rainy": "https://images.unsplash.com/photo-1534274988757-a28bf1a57c17?w=400",
 }

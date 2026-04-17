@@ -329,13 +329,13 @@ export default function Checkout() {
                   <h2 className="text-lg font-bold mb-4">Delivery Details</h2>
                   <div className="grid sm:grid-cols-2 gap-4">
                     {[
-                      {name:"name",    label:"Full Name",    placeholder:"Rahul Sharma",       type:"text"},
-                      {name:"email",   label:"Email",        placeholder:"rahul@email.com",    type:"email"},
-                      {name:"phone",   label:"Phone",        placeholder:"9876543210",         type:"tel"},
-                      {name:"address", label:"Address",      placeholder:"House No, Street",   type:"text"},
-                      {name:"city",    label:"City",         placeholder:"Indore",             type:"text"},
-                      {name:"state",   label:"State",        placeholder:"Madhya Pradesh",     type:"text"},
-                      {name:"pincode", label:"Pincode",      placeholder:"452001",             type:"text"},
+                      {name:"name",    label:"Full Name",    placeholder:"Enter your full name",       type:"text"},
+                      {name:"email",   label:"Email",        placeholder:"Enter your email",    type:"email"},
+                      {name:"phone",   label:"Phone",        placeholder:"Enter your phone number",         type:"tel"},
+                      {name:"address", label:"Address",      placeholder:"Enter your address",   type:"text"},
+                      {name:"city",    label:"City",         placeholder:"Enter your city",             type:"text"},
+                      {name:"state",   label:"State",        placeholder:"Enter your state",     type:"text"},
+                      {name:"pincode", label:"Pincode",      placeholder:"Enter your pincode",             type:"text"},
                     ].map(f => (
                       <div key={f.name} className={f.name === "address" ? "sm:col-span-2" : ""}>
                         <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wide">{f.label}</label>

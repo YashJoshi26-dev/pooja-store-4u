@@ -276,9 +276,9 @@ function DashboardContent({ period, onNavigate, stats, recentOrders, topProducts
   const custSpark    = stats?.monthlyCustomers|| Array(12).fill(0);
 
   const kpis = [
-    { label:"Total Revenue", value:stats?`₹${(stats.totalRevenue/100000).toFixed(1)}L`:"—",   sub:stats?.revenueGrowth  !=null?`${stats.revenueGrowth >0?"+":""}${stats.revenueGrowth}% vs last month`:"Loading...",  spark:revenueSpark, color:"#ff3f6c", icon:"💰" },
-    { label:"Total Orders",  value:stats?stats.totalOrders.toLocaleString():"—",               sub:stats?.ordersGrowth   !=null?`${stats.ordersGrowth  >0?"+":""}${stats.ordersGrowth}% vs last month`:"Loading...",   spark:ordersSpark,  color:"#ff6b35", icon:"📦" },
-    { label:"Customers",     value:stats?stats.totalCustomers.toLocaleString():"—",            sub:stats?.customersGrowth!=null?`${stats.customersGrowth>0?"+":""}${stats.customersGrowth}% vs last month`:"Loading...",spark:custSpark,    color:"#ffa500", icon:"👥" },
+   { label:"Total Revenue", value: stats ? `₹${((stats.totalRevenue||0)/100000).toFixed(1)}L` : "—", color:"#ff3f6c" },
+{ label:"Total Orders",  value: stats ? (stats.totalOrders||0).toLocaleString() : "—",             color:"#ff6b35" },
+{ label:"Customers",     value: stats ? (stats.totalCustomers||0).toLocaleString() : "—",          color:"#ffa500" },
     { label:"Conversion",    value:stats?`${stats.conversionRate??"—"}%`:"—",                  sub:"Based on orders vs visits",                                                                                          spark:revenueSpark, color:"#03a685", icon:"📈" },
   ];
 
@@ -303,7 +303,7 @@ function DashboardContent({ period, onNavigate, stats, recentOrders, topProducts
             </div>
             <p style={{fontSize:22,fontWeight:800,color:"#1a1a1a",fontFamily:"'JetBrains Mono',monospace",marginBottom:4}}>{k.value}</p>
             <p style={{fontSize:11,fontWeight:700,color:"#aaa",letterSpacing:"0.04em",marginBottom:2}}>{k.label.toUpperCase()}</p>
-            <p style={{fontSize:11,color:k.sub.startsWith("+")?"#03a685":k.sub.startsWith("-")?"#cc0000":"#aaa",fontWeight:600}}>{k.sub}</p>
+            <p style={{fontSize:11,color:(k.sub||"").startsWith("+")?"#03a685":(k.sub||"").startsWith("-")?"#cc0000":"#aaa",fontWeight:600}}>{k.sub||""}</p>
           </div>
         ))}
       </div>
@@ -374,7 +374,7 @@ function DashboardContent({ period, onNavigate, stats, recentOrders, topProducts
             <table style={{width:"100%",borderCollapse:"collapse"}}>
               <thead>
                 <tr style={{borderBottom:"1px solid #f5f5f5"}}>
-                  {["Order ID","Customer","Item","Amount","Status","Date"].map(h=>(
+                 {["Order ID","Customer","Items","Amount","Status","Tracking","Date","Action"].map(h=>(
                     <th key={h} style={{fontSize:10,fontWeight:700,color:"#bbb",letterSpacing:"0.06em",padding:"0 8px 10px",textAlign:"left"}}>{h.toUpperCase()}</th>
                   ))}
                 </tr>
@@ -393,9 +393,16 @@ function DashboardContent({ period, onNavigate, stats, recentOrders, topProducts
                       <td style={{padding:"11px 8px"}}>
                         <span style={{background:sc.bg,color:sc.color,fontSize:11,fontWeight:700,padding:"3px 9px",borderRadius:20}}>{o.status}</span>
                       </td>
-                      <td style={{padding:"11px 8px",fontSize:11,color:"#aaa"}}>
-                        {new Date(o.createdAt).toLocaleDateString("en-IN",{day:"numeric",month:"short"})}
-                      </td>
+                    <td style={{padding:"12px 16px"}}>
+  {o.logisticPartner ? (
+    <div>
+      <p style={{fontSize:11,fontWeight:700,color:"#0066cc"}}>{o.logisticPartner}</p>
+      <p style={{fontSize:10,color:"#aaa",fontFamily:"monospace"}}>{o.trackingNumber||"—"}</p>
+    </div>
+  ) : (
+    <span style={{fontSize:11,color:"#ddd"}}>—</span>
+  )}
+</td>
                     </tr>
                   );
                 })}
@@ -494,7 +501,23 @@ export default function AdminDashboard() {
       api.get("/orders").catch(() => []),
       api.get("/products?status=all").catch(() => []),
     ]).then(([s, orders, products]) => {
-      if (s) setStats(s);
+      if (s) setStats({totalRevenue:      s.totalRevenue      ?? 0,
+  totalOrders:       s.totalOrders       ?? 0,
+  totalCustomers:    s.totalCustomers    ?? 0,
+  delivered:         s.delivered         ?? 0,
+  shipped:           s.shipped           ?? 0,
+  totalProducts:     s.totalProducts     ?? 0,
+  revenueGrowth:     s.revenueGrowth     ?? 0,
+  ordersGrowth:      s.ordersGrowth      ?? 0,
+  customersGrowth:   s.customersGrowth   ?? 0,
+  conversionRate:    s.conversionRate    ?? 0,
+  pendingOrders:     s.pendingOrders     ?? 0,
+  cancelledOrders:   s.cancelledOrders   ?? 0,
+  deliveredOrders:   s.deliveredOrders   ?? 0,
+  newCustomersThisMonth: s.newCustomersThisMonth ?? 0,
+  monthlyRevenue:    s.monthlyRevenue    ?? Array(12).fill(0),
+  monthlyOrders:     s.monthlyOrders     ?? Array(12).fill(0),
+  monthlyCustomers:  s.monthlyCustomers  ?? Array(12).fill(0),});
       // ✅ Use real orders for recent orders table
       if (orders) setRecentOrders(Array.isArray(orders) ? orders.slice(0,6) : []);
       // ✅ Use real products sorted by stock sold
