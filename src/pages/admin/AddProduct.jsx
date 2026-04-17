@@ -3,6 +3,23 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { addProduct, updateProduct, getProductById } from "../../api/productApi";
 import { CATEGORIES, getSubCategories } from "../../data/categories";
 
+
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+
+async function generateWithGemini(prompt) {
+  const res = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+      }),
+    }
+  );
+  const data = await res.json();
+  return data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+}
 const tags = ["New Arrival", "Best Seller", "Sale", "Featured", "Limited Edition", "Trending"];
 
 export default function AddProduct() {
@@ -10,6 +27,41 @@ export default function AddProduct() {
   const [searchParams] = useSearchParams();
   const editId = searchParams.get("edit"); // ✅ null = add mode, string = edit mode
   const isEdit = !!editId;
+  const [aiLoading, setAiLoading] = useState(false);
+  const handleAIGenerate = async () => {
+    if (!form.name.trim()) {
+      setError("Please enter a product name first to generate AI content.");
+      return;
+    }
+    setAiLoading(true);
+    setError("");
+    try {
+      const prompt = `You are a product listing expert for an Indian eCommerce store called PoojaStore4u.
+Generate a product listing for: "${form.name}"
+Category: ${form.categories?.join(", ") || form.parentCategory || "General"}
+
+Return ONLY a JSON object with these fields (no markdown, no backticks):
+{
+  "description": "detailed product description in 3-4 lines",
+  "shortDescription": "one line summary",
+  "tags": ["tag1", "tag2", "tag3"]
+}`;
+
+      const raw = await generateWithGemini(prompt);
+      const clean = raw.replace(/```json|```/g, "").trim();
+      const parsed = JSON.parse(clean);
+
+      setForm(f => ({
+        ...f,
+        description: parsed.description || f.description,
+        tags: parsed.tags?.length ? parsed.tags : f.tags,
+      }));
+    } catch (e) {
+      setError("AI generation failed. Check your Gemini API key in .env");
+    } finally {
+      setAiLoading(false);
+    }
+  };
 
   const [form, setForm] = useState({
     name: "", parentCategory: "", category: "", categories: [], // ✅ fix: add categories array
@@ -116,7 +168,7 @@ export default function AddProduct() {
         const formData = new FormData();
         formData.append("title", form.name);
         formData.append("description", form.description || "");
-        formData.append("category",   form.categories?.[0] || form.category || "");
+        formData.append("category", form.categories?.[0] || form.category || "");
         formData.append("categories", JSON.stringify(form.categories || []));
         formData.append("brand", form.brand || "Custom");
         formData.append("stock", form.stock);
@@ -464,6 +516,20 @@ export default function AddProduct() {
                   <textarea className="ap-textarea" name="description" value={form.description} onChange={handleChange} rows={4} placeholder="Describe the product..." />
                   <p style={{ fontSize: 11, color: "#bbb", textAlign: "right", marginTop: 4 }}>{form.description.length}/2000</p>
                 </div>
+                <button
+                  type="button"
+                  onClick={handleAIGenerate}
+                  disabled={aiLoading}
+                  style={{
+                    background: aiLoading ? "#f0f0f0" : "linear-gradient(135deg,#4285f4,#34a853)",
+                    color: aiLoading ? "#aaa" : "#fff",
+                    border: "none", borderRadius: 6, padding: "4px 12px",
+                    fontSize: 11, fontWeight: 700, cursor: aiLoading ? "not-allowed" : "pointer",
+                    display: "inline-flex", alignItems: "center", gap: 5, marginLeft: 8,
+                  }}
+                >
+                  {aiLoading ? "Generating..." : "✨ Generate with Gemini"}
+                </button>
               </div>
             )}
 
@@ -563,7 +629,7 @@ export default function AddProduct() {
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
                     <label style={S.lbl}>Product Variants <span style={{ fontSize: 10, color: "#aaa", fontWeight: 400, textTransform: "none" }}>(optional)</span></label>
                     <button type="button"
-                      onClick={() => setForm(f => ({ ...f, variants: [...f.variants, { size: "", color: "", design: "", price: "", stock: "" }] }))}
+                      onClick={() => setForm(f => ({ ...f, variants: [...f.variants, { size: "", color: "", design: "", price: "", mrp: "", weight: "", stock: "" }] }))}   
                       style={{ background: "#ff3f6c", color: "#fff", border: "none", borderRadius: 6, padding: "5px 12px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>
                       + Add Variant
                     </button>
@@ -590,25 +656,37 @@ export default function AddProduct() {
                             style={{ padding: "7px 10px", fontSize: 12 }} />
                         </div>
                       </div>
-                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr auto", gap: 8, alignItems: "end" }}>
-                        <div>
-                          <label style={{ ...S.lbl, fontSize: 9 }}>PRICE (₹)</label>
-                          <input className="ap-input" type="number" placeholder="0" value={v.price}
-                            onChange={e => setForm(f => ({ ...f, variants: f.variants.map((x, idx) => idx === i ? { ...x, price: e.target.value } : x) }))}
-                            style={{ padding: "7px 10px", fontSize: 12 }} />
-                        </div>
-                        <div>
-                          <label style={{ ...S.lbl, fontSize: 9 }}>STOCK</label>
-                          <input className="ap-input" type="number" placeholder="0" value={v.stock}
-                            onChange={e => setForm(f => ({ ...f, variants: f.variants.map((x, idx) => idx === i ? { ...x, stock: e.target.value } : x) }))}
-                            style={{ padding: "7px 10px", fontSize: 12 }} />
-                        </div>
-                        <button type="button"
-                          onClick={() => setForm(f => ({ ...f, variants: f.variants.filter((_, idx) => idx !== i) }))}
-                          style={{ background: "#fef0f0", border: "1px solid #ffd0d0", borderRadius: 6, padding: "7px 10px", cursor: "pointer", color: "#cc0000", fontSize: 12, fontWeight: 700 }}>
-                          ✕
-                        </button>
-                      </div>
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr auto", gap: 8, alignItems: "end" }}>
+  <div>
+    <label style={{ ...S.lbl, fontSize: 9 }}>MRP (₹)</label>
+    <input className="ap-input" type="number" placeholder="0" value={v.mrp || ""}
+      onChange={e => setForm(f => ({ ...f, variants: f.variants.map((x, idx) => idx === i ? { ...x, mrp: e.target.value } : x) }))}
+      style={{ padding: "7px 10px", fontSize: 12 }} />
+  </div>
+  <div>
+    <label style={{ ...S.lbl, fontSize: 9 }}>PRICE (₹)</label>
+    <input className="ap-input" type="number" placeholder="0" value={v.price}
+      onChange={e => setForm(f => ({ ...f, variants: f.variants.map((x, idx) => idx === i ? { ...x, price: e.target.value } : x) }))}
+      style={{ padding: "7px 10px", fontSize: 12 }} />
+  </div>
+  <div>
+    <label style={{ ...S.lbl, fontSize: 9 }}>WEIGHT (kg)</label>
+    <input className="ap-input" type="number" placeholder="0.5" step="0.1" value={v.weight || ""}
+      onChange={e => setForm(f => ({ ...f, variants: f.variants.map((x, idx) => idx === i ? { ...x, weight: e.target.value } : x) }))}
+      style={{ padding: "7px 10px", fontSize: 12 }} />
+  </div>
+  <div>
+    <label style={{ ...S.lbl, fontSize: 9 }}>STOCK</label>
+    <input className="ap-input" type="number" placeholder="0" value={v.stock}
+      onChange={e => setForm(f => ({ ...f, variants: f.variants.map((x, idx) => idx === i ? { ...x, stock: e.target.value } : x) }))}
+      style={{ padding: "7px 10px", fontSize: 12 }} />
+  </div>
+  <button type="button"
+    onClick={() => setForm(f => ({ ...f, variants: f.variants.filter((_, idx) => idx !== i) }))}
+    style={{ background: "#fef0f0", border: "1px solid #ffd0d0", borderRadius: 6, padding: "7px 10px", cursor: "pointer", color: "#cc0000", fontSize: 12, fontWeight: 700 }}>
+    ✕
+  </button>
+</div>
                     </div>
                   ))}
                 </div>

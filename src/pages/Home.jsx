@@ -287,7 +287,7 @@ export default function Home() {
           </div>
         </div>
         <div className="text-center text-sm text-gray-400 mt-10 border-t border-gray-100 pt-6">
-          © 2026 PoojaStore4u. All rights reserved.
+          © 2026 DiziVeera. All rights reserved.
         </div>
       </footer>
     </div>

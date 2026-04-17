@@ -44,22 +44,27 @@ function Category() {
       try {
         let data = []
 
-        if (hasSubCats) {
-          // ✅ Parent category — load products from ALL subcategories in parallel
-          const results = await Promise.all(
-            parentCat.sub.map(sub => getProductsByCategory(sub.label))
-          )
-          // ✅ Merge and deduplicate by _id
-          const seen = new Set()
-          data = results.flat().filter(p => {
-            if (seen.has(p._id)) return false
-            seen.add(p._id)
-            return true
-          })
-        } else {
-          // Single category — backend searches categories[] array AND legacy category field
-          data = await getProductsByCategory(decodedName)
-        }
+       if (hasSubCats) {
+  // "All" tab — load from ALL subcategories
+  const results = await Promise.all(
+    parentCat.sub.map(sub => getProductsByCategory(sub.label))
+  )
+  const seen = new Set()
+  data = results.flat().filter(p => {
+    if (seen.has(p._id)) return false
+    seen.add(p._id)
+    return true
+  })
+} else {
+  // Check if this is a subcategory page
+  const parentOfThis = CATEGORIES.find(c => c.sub?.some(s => s.label === decodedName))
+  if (parentOfThis) {
+    // Sub-tab clicked — load only this subcategory products
+    data = await getProductsByCategory(decodedName)
+  } else {
+    data = await getProductsByCategory(decodedName)
+  }
+}
 
         setProducts(Array.isArray(data) ? data : [])
         setFiltered(Array.isArray(data) ? data : [])
@@ -100,11 +105,31 @@ function Category() {
     <div className="max-w-7xl mx-auto px-4 py-10">
 
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-sm text-gray-400 mb-4">
-        <Link to="/" className="hover:text-red-500">Home</Link>
-        <span>›</span>
-        <span className="text-gray-700 font-medium">{decodedName}</span>
-      </div>
+      {/* Breadcrumb */}
+<div className="flex items-center gap-2 text-sm text-gray-400 mb-4 flex-wrap">
+  <Link to="/" className="hover:text-red-500">Home</Link>
+  <span>›</span>
+  {(() => {
+    const parentOfThis = CATEGORIES.find(c =>
+      c.sub?.some(s => s.label === decodedName)
+    )
+    if (parentOfThis) {
+      return (
+        <>
+          <Link
+            to={`/category/${encodeURIComponent(parentOfThis.label)}`}
+            className="hover:text-red-500"
+          >
+            {parentOfThis.label}
+          </Link>
+          <span>›</span>
+          <span className="text-gray-700 font-medium">{decodedName}</span>
+        </>
+      )
+    }
+    return <span className="text-gray-700 font-medium">{decodedName}</span>
+  })()}
+</div>
 
       {/* Header */}
       <div className="mb-6">
@@ -115,25 +140,44 @@ function Category() {
       </div>
 
       {/* ✅ Subcategory tabs for parent categories like Pujan Samagri */}
-      {hasSubCats && (
-        <div className="flex flex-wrap gap-2 mb-6">
-          <Link
-            to={`/category/${encodeURIComponent(parentCat.label)}`}
-            className="px-4 py-1.5 rounded-full text-sm font-semibold bg-red-500 text-white border border-red-500"
-          >
-            All
-          </Link>
-          {parentCat.sub.map(sub => (
-            <Link
-              key={sub.id}
-              to={`/category/${encodeURIComponent(sub.label)}`}
-              className="px-4 py-1.5 rounded-full text-sm font-semibold border border-gray-200 text-gray-600 hover:border-red-400 hover:text-red-500 transition"
-            >
-              {sub.label}
-            </Link>
-          ))}
-        </div>
-      )}
+    {/* Subcategory tabs — show on both parent AND sub pages */}
+{(() => {
+  const tabParent = hasSubCats
+    ? parentCat
+    : CATEGORIES.find(c => c.sub?.some(s => s.label === decodedName))
+
+  if (!tabParent) return null
+
+  return (
+    <div className="flex flex-wrap gap-2 mb-6">
+      {/* All tab */}
+      <Link
+        to={`/category/${encodeURIComponent(tabParent.label)}`}
+        className={`px-4 py-1.5 rounded-full text-sm font-semibold border transition ${
+          decodedName === tabParent.label
+            ? "bg-red-500 text-white border-red-500"
+            : "border-gray-200 text-gray-600 hover:border-red-400 hover:text-red-500"
+        }`}
+      >
+        All
+      </Link>
+      {/* Sub tabs */}
+      {tabParent.sub.map(sub => (
+        <Link
+          key={sub.id}
+          to={`/category/${encodeURIComponent(sub.label)}`}
+          className={`px-4 py-1.5 rounded-full text-sm font-semibold border transition ${
+            decodedName === sub.label
+              ? "bg-red-500 text-white border-red-500"
+              : "border-gray-200 text-gray-600 hover:border-red-400 hover:text-red-500"
+          }`}
+        >
+          {sub.label}
+        </Link>
+      ))}
+    </div>
+  )
+})()}
 
       <div className="grid lg:grid-cols-4 gap-8">
 

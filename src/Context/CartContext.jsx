@@ -23,36 +23,45 @@ export function CartProvider({ children }) {
     localStorage.setItem("cart", JSON.stringify(cart))
   }, [cart])
 
-  const addToCart = (product, qty = 1) => {
-    setCart((prev) => {
-      const id = product._id || product.id
-      const existing = prev.find((item) => (item._id || item.id) === id)
-      if (existing) {
-        return prev.map((item) =>
-          (item._id || item.id) === id
-            ? { ...item, quantity: item.quantity + qty }
-            : item
-        )
-      }
-      return [...prev, { ...product, quantity: qty }]
-    })
-  }
+ const addToCart = (product, qty = 1) => {
+  setCart((prev) => {
+    const id = product._id || product.id
+
+    // ── Build a unique cart key combining product id + variant selections ──
+    const variantKey = product.selectedVariant
+      ? `${id}_${product.selectedVariant.size || ""}_${product.selectedVariant.color || ""}_${product.selectedVariant.design || ""}`
+      : id
+
+    const existing = prev.find((item) => item.cartKey === variantKey)
+
+    if (existing) {
+      return prev.map((item) =>
+        item.cartKey === variantKey
+          ? { ...item, quantity: item.quantity + qty }
+          : item
+      )
+    }
+    return [...prev, { ...product, quantity: qty, cartKey: variantKey }]
+  })
+}
 
   // ✅ Buy Now — replaces cart with single product
   const buyNow = (product, qty = 1) => {
     setCart([{ ...product, quantity: qty }])
   }
 
-  const removeFromCart = (id) => {
-    setCart((prev) => prev.filter((item) => (item._id || item.id) !== id))
-  }
+ const removeFromCart = (id) => {
+  setCart((prev) => prev.filter((item) => (item.cartKey || item._id || item.id) !== id))
+}
 
-  const updateQuantity = (id, quantity) => {
-    if (quantity < 1) { removeFromCart(id); return }
-    setCart((prev) =>
-      prev.map((item) => (item._id || item.id) === id ? { ...item, quantity } : item)
+const updateQuantity = (id, quantity) => {
+  if (quantity < 1) { removeFromCart(id); return }
+  setCart((prev) =>
+    prev.map((item) =>
+      (item.cartKey || item._id || item.id) === id ? { ...item, quantity } : item
     )
-  }
+  )
+}
 
   const clearCart = () => setCart([])
 

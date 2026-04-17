@@ -16,7 +16,7 @@ export default function Cart() {
         </div>
         <Link to="/"
           className="flex items-center gap-2 bg-slate-900 text-white px-8 py-3 rounded-xl font-semibold hover:bg-slate-800 transition">
-          <FiArrowLeft size={16}/> Continue Shopping
+          <FiArrowLeft size={16} /> Continue Shopping
         </Link>
       </div>
     )
@@ -29,7 +29,7 @@ export default function Cart() {
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
           <Link to="/" className="text-sm text-gray-400 hover:text-slate-700 flex items-center gap-1 transition">
-            <FiArrowLeft size={14}/> Continue Shopping
+            <FiArrowLeft size={14} /> Continue Shopping
           </Link>
           <h1 className="text-2xl font-bold text-slate-900">
             Shopping Cart
@@ -43,15 +43,15 @@ export default function Cart() {
           <div className="lg:col-span-2 space-y-4">
             <AnimatePresence>
               {cart.map(item => {
-                const id = item._id || item.id
+                const id = item.cartKey || item._id || item.id
                 return (
                   <motion.div
                     key={id}
                     layout
-                    initial={{ opacity:0, y:10 }}
-                    animate={{ opacity:1, y:0 }}
-                    exit={{ opacity:0, x:-40, height:0, marginBottom:0 }}
-                    transition={{ duration:0.2 }}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, x: -40, height: 0, marginBottom: 0 }}
+                    transition={{ duration: 0.2 }}
                     className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4"
                   >
                     <div className="flex gap-4">
@@ -61,7 +61,7 @@ export default function Cart() {
                           src={item.image || item.images?.[0]}
                           alt={item.title}
                           className="w-20 h-20 rounded-xl object-cover border border-gray-100"
-                          onError={e => e.target.src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=100"}
+                          onError={e => e.target.src = "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=100"}
                         />
                       </Link>
 
@@ -73,7 +73,26 @@ export default function Cart() {
                           </p>
                         </Link>
                         {item.category && (
-                          <p className="text-xs text-gray-400 mb-2">{item.category}</p>
+                          <p className="text-xs text-gray-400 mb-1">{item.category}</p>
+                        )}
+                        {item.selectedVariant && (
+                          <div className="flex gap-1 flex-wrap mb-2">
+                            {item.selectedVariant.size && (
+                              <span className="text-[10px] font-semibold bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
+                                Size: {item.selectedVariant.size}
+                              </span>
+                            )}
+                            {item.selectedVariant.color && (
+                              <span className="text-[10px] font-semibold bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
+                                Color: {item.selectedVariant.color}
+                              </span>
+                            )}
+                            {item.selectedVariant.design && (
+                              <span className="text-[10px] font-semibold bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
+                                Design: {item.selectedVariant.design}
+                              </span>
+                            )}
+                          </div>
                         )}
 
                         {/* Price */}
@@ -84,7 +103,7 @@ export default function Cart() {
                           )}
                           {item.oldPrice && item.price < item.oldPrice && (
                             <span className="text-xs font-bold text-green-600">
-                              {Math.round((1 - item.price/item.oldPrice)*100)}% off
+                              {Math.round((1 - item.price / item.oldPrice) * 100)}% off
                             </span>
                           )}
                         </div>
@@ -121,7 +140,7 @@ export default function Cart() {
                               className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition"
                               title="Remove item"
                             >
-                              <FiTrash2 size={15}/>
+                              <FiTrash2 size={15} />
                             </button>
                           </div>
                         </div>
@@ -140,7 +159,7 @@ export default function Cart() {
 
               <div className="space-y-3 mb-4">
                 <div className="flex justify-between text-sm text-gray-500">
-                  <span>Subtotal ({cart.reduce((s,i)=>s+i.quantity,0)} items)</span>
+                  <span>Subtotal ({cart.reduce((s, i) => s + i.quantity, 0)} items)</span>
                   <span className="font-semibold text-slate-900">₹{subtotal.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-sm text-gray-500">
@@ -172,13 +191,13 @@ export default function Cart() {
 
               <Link to="/checkout"
                 className="flex items-center justify-center gap-2 w-full bg-red-500 text-white py-3 rounded-xl font-bold hover:bg-red-600 transition text-sm">
-                <FiShoppingBag size={16}/>
+                <FiShoppingBag size={16} />
                 Proceed to Checkout
               </Link>
 
               <Link to="/"
                 className="flex items-center justify-center gap-1 w-full mt-3 text-sm text-gray-400 hover:text-slate-700 transition">
-                <FiArrowLeft size={13}/> Continue Shopping
+                <FiArrowLeft size={13} /> Continue Shopping
               </Link>
             </div>
           </div>
